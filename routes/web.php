@@ -1,9 +1,7 @@
 <?php
 
+use App\Http\Controllers\ValidatorController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('welcome');
-})->name('home');
-
+Route::get('/', [ValidatorController::class, 'index'])->name('validator');
+Route::post('/validate', [ValidatorController::class, 'validate'])->name('validate');
