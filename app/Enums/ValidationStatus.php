@@ -9,6 +9,7 @@ enum ValidationStatus: string
     case FORBIDDEN = 'forbidden';
     case RATE_LIMITED = 'rate_limited';
     case UNAVAILABLE = 'unavailable';
+    case FAILED = 'failed';
 
     public function getStatusClass(): string
     {
@@ -18,6 +19,7 @@ enum ValidationStatus: string
             self::FORBIDDEN => 'warning',
             self::RATE_LIMITED => 'warning',
             self::UNAVAILABLE => 'info',
+            self::FAILED => 'error',
         };
     }
 
@@ -29,6 +31,7 @@ enum ValidationStatus: string
             self::FORBIDDEN => 'Forbidden',
             self::RATE_LIMITED => 'Rate Limited',
             self::UNAVAILABLE => 'Unavailable',
+            self::FAILED => 'Failed',
         };
     }
 }

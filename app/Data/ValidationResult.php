@@ -10,9 +10,9 @@ class ValidationResult extends Data
 {
     public function __construct(
         public readonly bool $success,
-        public readonly ValidationStatus $status,
-        public readonly string $message,
         public readonly string $provider,
+        public readonly string $message,
+        public readonly ValidationStatus $status,
         public readonly string|Optional $code = new Optional(),
         public readonly array|Optional $metadata = new Optional(),
     ) {}
@@ -21,16 +21,16 @@ class ValidationResult extends Data
      * Create a successful validation result
      */
     public static function success(
-        string $message,
         string $provider,
-        ?array $metadata = null,
-        ?string $code = null
+        string $message,
+        ?string $code = null,
+        ?array $metadata = null
     ): self {
         return new self(
             success: true,
-            status: ValidationStatus::VALID,
-            message: $message,
             provider: $provider,
+            message: $message,
+            status: ValidationStatus::VALID,
             code: $code ?? new Optional(),
             metadata: $metadata ?? new Optional()
         );
@@ -40,17 +40,17 @@ class ValidationResult extends Data
      * Create a failed validation result
      */
     public static function failure(
-        string $message,
         string $provider,
+        string $message,
         ?ValidationStatus $status = null,
         ?string $code = null,
         ?array $metadata = null
     ): self {
         return new self(
             success: false,
-            status: $status ?? ValidationStatus::INVALID,
-            message: $message,
             provider: $provider,
+            message: $message,
+            status: $status ?? ValidationStatus::INVALID,
             code: $code ?? new Optional(),
             metadata: $metadata ?? new Optional()
         );
@@ -83,4 +83,4 @@ class ValidationResult extends Data
         $data['status_label'] = $this->getStatusLabel();
         return $data;
     }
-} 
+}
