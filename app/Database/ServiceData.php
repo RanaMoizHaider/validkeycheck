@@ -79,6 +79,20 @@ class ServiceData
                 ]),
                 'class_name' => 'App\\Services\\AI\\Gemini',
             ],
+            [
+                'name' => 'OpenRouter',
+                'slug' => 'openrouter',
+                'category' => 'ai',
+                'description' => 'Universal API for accessing multiple AI models from different providers',
+                'website_url' => 'https://openrouter.ai',
+                'api_keys_url' => 'https://openrouter.ai/keys',
+                'base_url' => 'https://openrouter.ai/api/v1',
+                'documentation_url' => 'https://openrouter.ai/docs/api-reference/authentication',
+                'required_fields' => json_encode([
+                    'api_key' => 'API Key'
+                ]),
+                'class_name' => 'App\\Services\\AI\\OpenRouter',
+            ],
         ];
     }
 } 
