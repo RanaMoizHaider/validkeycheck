@@ -10,10 +10,6 @@ class Category extends Model
 {
     use Sushi;
 
-    protected $hidden = [
-        'id'
-    ];
-
     public function getRows()
     {
         return CategoryData::all();

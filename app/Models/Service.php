@@ -15,7 +15,7 @@ class Service extends Model
     ];
 
     protected $hidden = [
-        'id', 'class_name'
+        'class_name'
     ];
 
     public function getRows()

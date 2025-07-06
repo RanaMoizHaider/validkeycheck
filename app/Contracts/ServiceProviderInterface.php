@@ -33,11 +33,6 @@ interface ServiceProviderInterface
     public function getDescription(): string;
 
     /**
-     * Get the logo URL for the service provider
-     */
-    public function getLogo(): string;
-
-    /**
      * Get the required fields for validation (e.g., 'api_key', 'secret_key')
      */
     public function getRequiredFields(): array;
