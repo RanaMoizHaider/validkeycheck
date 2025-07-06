@@ -74,48 +74,28 @@ class OpenAI extends AbstractServiceProvider
 
         } catch (PrismException $e) {
             $statusCode = $e->getPrevious()->getCode();
-            
-            switch ($statusCode) {
-                case 400:
-                    $userMessage = 'Invalid request format or missing parameters';
-                    break;
-                case 401:
-                    $userMessage = 'Invalid API key provided';
-                    break;
-                case 403:
-                    $userMessage = 'Access forbidden - check your API key permissions';
-                    break;
-                case 404:
-                    $userMessage = 'Requested resource not found';
-                    break;
-                case 429:
-                    $userMessage = 'Rate limit exceeded - please try again later';
-                    break;
-                case 500:
-                    $userMessage = 'OpenAI service temporarily unavailable';
-                    break;
-                case 503:
-                    $userMessage = 'OpenAI service is currently overloaded - please try again later';
-                    break;
-                default:
-                    $userMessage = 'OpenAI API request failed';
-            }
+
+            $userMessage = match ($statusCode) {
+                400 => 'Invalid request format or missing parameters',
+                401 => 'Invalid API key provided',
+                403 => 'Access forbidden - check your API key permissions',
+                404 => 'Requested resource not found',
+                429 => 'Rate limit exceeded - please try again later',
+                500 => 'OpenAI service temporarily unavailable',
+                503 => 'OpenAI service is currently overloaded - please try again later',
+                default => 'OpenAI API request failed',
+            };
+
+            $status = match ($statusCode) {
+                500, 503 => ValidationStatus::UNAVAILABLE,
+                default => ValidationStatus::INVALID,
+            };
 
             return ValidationResult::failure(
                 provider: 'OpenAI',
                 message: $userMessage,
-                status: ValidationStatus::INVALID,
+                status: $status,
                 code: $statusCode
-            );
-        } catch (\Exception $e) {
-            return ValidationResult::failure(
-                provider: 'OpenAI',
-                message: 'An unexpected error occurred',
-                status: ValidationStatus::FAILED,
-                code: null,
-                metadata: [
-                    'details' => $e->getMessage(),
-                ]
             );
         }
     }
