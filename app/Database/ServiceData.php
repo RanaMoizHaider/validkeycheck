@@ -21,6 +21,20 @@ class ServiceData
                 ]),
                 'class_name' => 'App\\Services\\AI\\OpenAI',
             ],
+            [
+                'name' => 'Anthropic',
+                'slug' => 'anthropic',
+                'category' => 'ai',
+                'description' => 'AI safety company focused on developing safe, beneficial AI systems with Claude models',
+                'website_url' => 'https://anthropic.com',
+                'api_keys_url' => 'https://console.anthropic.com/settings/keys',
+                'base_url' => 'https://api.anthropic.com/v1',
+                'documentation_url' => 'https://docs.anthropic.com/en/api/getting-started',
+                'required_fields' => json_encode([
+                    'api_key' => 'API Key'
+                ]),
+                'class_name' => 'App\\Services\\AI\\Anthropic',
+            ],
         ];
     }
 } 
