@@ -65,6 +65,20 @@ class ServiceData
                 ]),
                 'class_name' => 'App\\Services\\AI\\DeepSeek',
             ],
+            [
+                'name' => 'Google Gemini',
+                'slug' => 'gemini',
+                'category' => 'ai',
+                'description' => 'Google\'s most capable AI model for text, code, and multimodal understanding',
+                'website_url' => 'https://ai.google.dev',
+                'api_keys_url' => 'https://aistudio.google.com/app/apikey',
+                'base_url' => 'https://generativelanguage.googleapis.com/v1beta',
+                'documentation_url' => 'https://ai.google.dev/gemini-api/docs/api-key',
+                'required_fields' => json_encode([
+                    'api_key' => 'API Key'
+                ]),
+                'class_name' => 'App\\Services\\AI\\Gemini',
+            ],
         ];
     }
 } 
