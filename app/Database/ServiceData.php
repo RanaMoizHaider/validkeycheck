@@ -121,6 +121,20 @@ class ServiceData
                 ]),
                 'class_name' => 'App\\Services\\AI\\Mistral',
             ],
+            [
+                'name' => 'xAI',
+                'slug' => 'xai',
+                'category' => 'ai',
+                'description' => 'Elon Musk\'s AI company developing Grok and other AI technologies',
+                'website_url' => 'https://x.ai',
+                'api_keys_url' => 'https://console.x.ai/team/api-keys',
+                'base_url' => 'https://api.x.ai/v1',
+                'documentation_url' => 'https://docs.x.ai/api',
+                'required_fields' => json_encode([
+                    'api_key' => 'API Key'
+                ]),
+                'class_name' => 'App\\Services\\AI\\XAI',
+            ],
         ];
     }
 } 
