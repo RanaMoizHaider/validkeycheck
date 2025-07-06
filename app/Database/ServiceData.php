@@ -93,6 +93,20 @@ class ServiceData
                 ]),
                 'class_name' => 'App\\Services\\AI\\OpenRouter',
             ],
+            [
+                'name' => 'Groq',
+                'slug' => 'groq',
+                'category' => 'ai',
+                'description' => 'Ultra-fast AI inference platform with Lightning-fast LLM API',
+                'website_url' => 'https://groq.com',
+                'api_keys_url' => 'https://console.groq.com/keys',
+                'base_url' => 'https://api.groq.com/openai/v1',
+                'documentation_url' => 'https://console.groq.com/docs/quickstart',
+                'required_fields' => json_encode([
+                    'api_key' => 'API Key'
+                ]),
+                'class_name' => 'App\\Services\\AI\\Groq',
+            ],
         ];
     }
 } 
