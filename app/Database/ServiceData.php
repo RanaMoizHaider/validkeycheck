@@ -51,6 +51,20 @@ class ServiceData
                 ]),
                 'class_name' => 'App\\Services\\AI\\AmazonBedrock',
             ],
+            [
+                'name' => 'DeepSeek',
+                'slug' => 'deepseek',
+                'category' => 'ai',
+                'description' => 'DeepSeek V3 - Advanced AI model for coding, reasoning, and general conversation',
+                'website_url' => 'https://deepseek.com',
+                'api_keys_url' => 'https://platform.deepseek.com/api_keys',
+                'base_url' => 'https://api.deepseek.com',
+                'documentation_url' => 'https://api-docs.deepseek.com',
+                'required_fields' => json_encode([
+                    'api_key' => 'API Key'
+                ]),
+                'class_name' => 'App\\Services\\AI\\DeepSeek',
+            ],
         ];
     }
 } 
