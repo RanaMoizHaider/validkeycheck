@@ -19,7 +19,7 @@ export default function CategoryTabs({
   return (
     <Tabs value={activeCategory} onValueChange={onCategoryChange} className={cn("w-full", className)}>
       <div className="flex justify-center mb-6">
-        <div className="overflow-x-auto w-full max-w-4xl">
+        <div className="overflow-x-auto w-full max-w-4xl scrollbar-hide">
           <TabsList className="flex w-max mx-auto">
             {categories.map((category) => (
               <TabsTrigger

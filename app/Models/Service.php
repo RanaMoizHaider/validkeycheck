@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Sushi\Sushi;
+use App\Database\ServiceData;
 use Illuminate\Database\Eloquent\Model;
+use Sushi\Sushi;
 
 class Service extends Model
 {
@@ -16,6 +17,21 @@ class Service extends Model
     protected $hidden = [
         'id', 'class_name'
     ];
+
+    public function getRows()
+    {
+        return ServiceData::all();
+    }
+
+    protected function sushiShouldCache()
+    {
+        return true;
+    }
+
+    protected function sushiCacheReferencePath()
+    {
+        return app_path('Database/ServiceData.php');
+    }
 
     public function getRouteKeyName()
     {

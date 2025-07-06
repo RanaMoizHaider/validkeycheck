@@ -14,6 +14,9 @@
         "inertiajs/inertia-laravel": "^2.0",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
+        "prism-php/bedrock": "^1.5",
+        "prism-php/prism": "^0.78.0",
+        "spatie/laravel-data": "^4.17",
         "tightenco/ziggy": "^2.4"
     },
     "require-dev": {

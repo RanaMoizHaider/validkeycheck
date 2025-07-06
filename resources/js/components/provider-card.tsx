@@ -81,7 +81,7 @@ export default function ProviderCard({
   return (
     <div
       className={cn(
-        "border border-gray-200 dark:border-white/10 rounded-lg p-3 hover:border-gray-300 dark:hover:border-white/20 transition-colors bg-white dark:bg-transparent flex flex-col h-full",
+        "border border-gray-200 dark:border-white/10 rounded-lg p-3 hover:border-gray-300 dark:hover:border-white/20 transition-colors bg-white dark:bg-transparent",
         className
       )}
     >
@@ -97,7 +97,7 @@ export default function ProviderCard({
         )}
       </div>
 
-      <div className="space-y-2 mt-auto">
+      <div className="space-y-2">
         {provider.fields.map((field) => {
           const fieldKey = `${provider.id}-${field.id}`
           const isVisible = visibleFields.has(fieldKey)

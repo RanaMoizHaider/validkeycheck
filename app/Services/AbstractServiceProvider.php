@@ -3,6 +3,9 @@
 namespace App\Services;
 
 use App\Contracts\ServiceProviderInterface;
+use App\Data\ServiceData;
+use App\Data\ValidationResult;
+use App\Models\Service;
 use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -11,7 +14,7 @@ abstract class AbstractServiceProvider implements ServiceProviderInterface
 {
     protected ?object $serviceData = null;
 
-    public function __construct(?object $serviceData = null)
+    public function __construct(ServiceData|Service|null $serviceData = null)
     {
         $this->serviceData = $serviceData;
     }
@@ -23,39 +26,30 @@ abstract class AbstractServiceProvider implements ServiceProviderInterface
 
     public function getSlug(): string
     {
-        return $this->serviceData?->slug ?? 'unknown';
+        return $this->serviceData?->slug ?? 'unknown-service';
     }
 
     public function getCategory(): string
     {
-        return $this->serviceData?->category ?? 'unknown';
+        return $this->serviceData?->category ?? 'other';
     }
 
     public function getDescription(): string
     {
-        return $this->serviceData?->description ?? 'No description available';
+        return $this->serviceData?->description ?? 'No description available.';
     }
 
-    public function getRequiredFields(): array
-    {
-        return $this->serviceData?->required_fields ?? [];
-    }
-    abstract protected function performValidation(array $credentials): array;
-
-    public function validate(array $credentials): array
+    public function validate(array $credentials): ValidationResult
     {
         try {
-            // Validate required fields
             $missingFields = $this->validateRequiredFields($credentials);
             if (!empty($missingFields)) {
-                return [
-                    'success' => false,
-                    'message' => 'Missing required fields: ' . implode(', ', $missingFields),
-                    'metadata' => null,
-                ];
+                return ValidationResult::failure(
+                    'Missing required fields: ' . implode(', ', $missingFields),
+                    'validation_error'
+                );
             }
             
-            // Perform the actual validation
             return $this->performValidation($credentials);
             
         } catch (Exception $e) {
@@ -65,11 +59,7 @@ abstract class AbstractServiceProvider implements ServiceProviderInterface
                 'trace' => $e->getTraceAsString()
             ]);
             
-            return [
-                'success' => false,
-                'message' => 'An error occurred during validation: ' . $e->getMessage(),
-                'metadata' => null,
-            ];
+            return ValidationResult::fromException($e, $this->getName());
         }
     }
 
@@ -96,32 +86,81 @@ abstract class AbstractServiceProvider implements ServiceProviderInterface
     protected function validateRequiredFields(array $credentials): array
     {
         $missing = [];
-        foreach ($this->getRequiredFields() as $field) {
-            if (empty($credentials[$field])) {
+        $requiredFields = $this->getRequiredFieldsArray();
+
+        foreach ($requiredFields as $field) {
+            if (!isset($credentials[$field]) || $credentials[$field] === '') {
                 $missing[] = $field;
             }
         }
         return $missing;
     }
 
-    protected function makeHttpRequest(string $url, array $options = []): array
+    /**
+     * Get required fields as an array of field names
+     */
+    protected function getRequiredFieldsArray(): array
     {
-        $response = Http::timeout(30)->retry(2, 1000);
+        $requiredFields = $this->getRequiredFields();
         
-        if (isset($options['headers'])) {
-            $response = $response->withHeaders($options['headers']);
+        if (is_array($requiredFields)) {
+            if (array_keys($requiredFields) !== range(0, count($requiredFields) - 1)) {
+                return array_keys($requiredFields);
+            } else {
+                return $requiredFields;
+            }
         }
         
-        if (isset($options['method']) && strtoupper($options['method']) === 'POST') {
-            $response = $response->post($url, $options['data'] ?? []);
+        if ($this->serviceData && isset($this->serviceData->required_fields)) {
+            $fields = is_string($this->serviceData->required_fields) 
+                ? json_decode($this->serviceData->required_fields, true) 
+                : $this->serviceData->required_fields;
+            
+            if (is_array($fields)) {
+                return is_array($fields) && array_keys($fields) !== range(0, count($fields) - 1) 
+                    ? array_keys($fields) 
+                    : $fields;
+            }
+        }
+        
+        return [];
+    }
+
+    protected function makeHttpRequest(string $url, array $options = []): array
+    {
+        $method = $options['method'] ?? 'GET';
+        $headers = $options['headers'] ?? [];
+        $data = $options['data'] ?? [];
+        $timeout = $options['timeout'] ?? 30;
+
+        $httpClient = Http::timeout($timeout)->withHeaders($headers);
+
+        if ($method === 'POST') {
+            $response = $httpClient->post($url, $data);
+        } elseif ($method === 'PUT') {
+            $response = $httpClient->put($url, $data);
+        } elseif ($method === 'DELETE') {
+            $response = $httpClient->delete($url);
         } else {
-            $response = $response->get($url, $options['query'] ?? []);
+            $response = $httpClient->get($url);
         }
 
         return [
             'status_code' => $response->status(),
+            'body' => $response->body(),
             'data' => $response->json(),
-            'response' => $response
         ];
     }
+
+    /**
+     * Perform the actual validation logic
+     * This method should be implemented by each service provider
+     */
+    abstract protected function performValidation(array $credentials): ValidationResult;
+
+    /**
+     * Get the required fields for this service provider
+     * This method should be implemented by each service provider
+     */
+    abstract public function getRequiredFields(): array;
 } 

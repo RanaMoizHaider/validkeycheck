@@ -1,3 +1,11 @@
+export enum ValidationStatus {
+  VALID = 'valid',
+  INVALID = 'invalid',
+  FORBIDDEN = 'forbidden',
+  RATE_LIMITED = 'rate_limited',
+  UNAVAILABLE = 'unavailable'
+}
+
 export interface Provider {
   slug: string;
   name: string;
@@ -15,4 +23,15 @@ export interface Category {
   name: string;
   description: string;
   providers: Provider[];
+}
+
+export interface ValidationResult {
+  success: boolean;
+  status: ValidationStatus;
+  message: string;
+  provider: string;
+  code?: string;
+  metadata?: { [key: string]: any };
+  status_class: string;
+  status_label: string;
 } 

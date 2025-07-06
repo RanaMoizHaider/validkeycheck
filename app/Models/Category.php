@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Database\CategoryData;
 use Illuminate\Database\Eloquent\Model;
 use Sushi\Sushi;
 
@@ -15,44 +16,17 @@ class Category extends Model
 
     public function getRows()
     {
-        return [
-            [
-                'id' => 1,
-                'name' => 'AI Providers',
-                'slug' => 'ai',
-                'description' => 'AI and machine learning service providers',
-            ],
-            [
-                'id' => 2,
-                'name' => 'Cloud Services',
-                'slug' => 'cloud',
-                'description' => 'Cloud infrastructure and platform services',
-            ],
-            [
-                'id' => 3,
-                'name' => 'Payment Gateways',
-                'slug' => 'payment',
-                'description' => 'Online payment processing services',
-            ],
-            [
-                'id' => 4,
-                'name' => 'Storage Services',
-                'slug' => 'storage',
-                'description' => 'Cloud storage and database services',
-            ],
-            [
-                'id' => 5,
-                'name' => 'Communication Services',
-                'slug' => 'communication',
-                'description' => 'Email, SMS, and messaging services',
-            ],
-            [
-                'id' => 6,
-                'name' => 'Others',
-                'slug' => 'other',
-                'description' => 'Other API services',
-            ],
-        ];
+        return CategoryData::all();
+    }
+
+    protected function sushiShouldCache()
+    {
+        return true;
+    }
+
+    protected function sushiCacheReferencePath()
+    {
+        return app_path('Database/CategoryData.php');
     }
 
     public function getRouteKeyName()

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ValidateProviderRequest;
 use App\Models\Category;
 use App\Models\Service;
+use App\Data\ValidationResult;
+use App\Enums\ValidationStatus;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -22,7 +24,8 @@ class ValidatorController extends Controller
             ->values();
 
         return Inertia::render('validator', [
-            'categories' => $categories
+            'categories' => $categories,
+            'currentYear' => date('Y')
         ]);
     }
 
@@ -31,30 +34,32 @@ class ValidatorController extends Controller
         $service = Service::where('slug', $request->validated('provider'))->first();
         
         if (!$service) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Service not found',
-                'metadata' => null,
-            ], 404);
+            return response()->json(
+                ValidationResult::failure(
+                    'Service not found',
+                    'not_found',
+                    ValidationStatus::UNAVAILABLE
+                )->toArray(),
+                404
+            );
         }
 
         try {
             $providerInstance = $service->createInstance();
             $result = $providerInstance->validate($request->validated('credentials'));
 
-            return response()->json([
-                'success' => $result['success'],
-                'message' => $result['message'],
-                'provider' => $service->name,
-                'metadata' => $result['metadata'] ?? null,
-            ]);
+            // Laravel Data automatically handles JSON serialization
+            return response()->json($result->toArray());
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed: ' . $e->getMessage(),
-                'provider' => $service->name,
-                'metadata' => null,
-            ], 500);
+            return response()->json(
+                ValidationResult::failure(
+                    $e->getMessage(),
+                    $service->name,
+                    ValidationStatus::UNAVAILABLE,
+                    $e->getCode() ? (string) $e->getCode() : null
+                )->toArray(),
+                500
+            );
         }
     }
 } 

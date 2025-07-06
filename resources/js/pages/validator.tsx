@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Head, router } from '@inertiajs/react';
-import { Category, Provider } from '@/types/validator';
+import type { Category, Provider, ValidationResult as ValidationResultType } from '@/types/validator';
+import { ValidationStatus } from '@/types/validator';
 import ValidatorHeader from '@/components/validator-header';
+import ValidatorFooter from '@/components/validator-footer';
 import ValidatorHero from '@/components/validator-hero';
 import CategoryTabs from '@/components/category-tabs';
 import ProviderCard, { ProviderCardData, ApiKeyData, ApiKeyField } from '@/components/provider-card';
-import ValidationResult, { ValidationResultData } from '@/components/validation-result';
+import ValidationResult from '@/components/validation-result';
+import ThankYouSection from '@/components/thank-you-section';
+import { Input } from '@/components/ui/input';
 
 interface ValidatorProps {
   categories: Category[];
-  result?: {
-    success: boolean;
-    message: string;
-    provider?: string;
-    metadata?: any;
-  };
+  currentYear: number;
+  result?: ValidationResultType;
 }
 
 // Convert backend providers to frontend format
@@ -27,7 +27,7 @@ const convertToProviderCardData = (providers: Provider[]): ProviderCardData[] =>
       fields = provider.required_fields.map(field => ({
         id: field,
         label: field.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()),
-        placeholder: `Enter your ${field.replace(/_/g, ' ')}`,
+        placeholder: ``,
         type: (field.toLowerCase().includes('secret') || field.toLowerCase().includes('key')) ? 'password' as const : 'text' as const,
         required: true,
       }));
@@ -36,7 +36,7 @@ const convertToProviderCardData = (providers: Provider[]): ProviderCardData[] =>
       fields = Object.entries(provider.required_fields).map(([fieldName, displayLabel]) => ({
         id: fieldName,
         label: displayLabel,
-        placeholder: `Enter your ${displayLabel.toLowerCase()}`,
+        placeholder: ``,
         type: (fieldName.toLowerCase().includes('secret') || fieldName.toLowerCase().includes('key') || fieldName.toLowerCase().includes('token')) ? 'password' as const : 'text' as const,
         required: true,
       }));
@@ -53,10 +53,11 @@ const convertToProviderCardData = (providers: Provider[]): ProviderCardData[] =>
 
 
 
-export default function Validator({ categories, result }: ValidatorProps) {
-  const [activeCategory, setActiveCategory] = useState<string>(categories[0]?.slug || '');
+export default function Validator({ categories, currentYear, result }: ValidatorProps) {
+  const [activeCategory, setActiveCategory] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [apiKeys, setApiKeys] = useState<ApiKeyData[]>([]);
-  const [validationResult, setValidationResult] = useState<ValidationResultData | null>(null);
+  const [validationResult, setValidationResult] = useState<ValidationResultType | null>(null);
   const [testingProvider, setTestingProvider] = useState<string | null>(null);
 
   // Handle result from backend (if any)
@@ -65,8 +66,13 @@ export default function Validator({ categories, result }: ValidatorProps) {
       setTestingProvider(null);
       setValidationResult({
         success: result.success,
+        status: result.status || (result.success ? ValidationStatus.VALID : ValidationStatus.INVALID),
         message: result.message,
-        metadata: result.metadata
+        provider: result.provider || 'Unknown',
+        code: result.code,
+        metadata: result.metadata,
+        status_class: result.status_class || (result.success ? 'success' : 'error'),
+        status_label: result.status_label || (result.success ? 'Valid' : 'Invalid')
       });
     }
   }, [result]);
@@ -75,14 +81,22 @@ export default function Validator({ categories, result }: ValidatorProps) {
   const allProviders = categories.flatMap(cat => cat.providers);
   const providerCards = convertToProviderCardData(allProviders);
   
-  // Get unique category names
-  const categoryNames = [...new Set(categories.map(cat => cat.name))];
+  // Get unique category names and add "All" at the beginning
+  const categoryNames = ['All', ...new Set(categories.map(cat => cat.name))];
   
-  // Get providers for the active category
-  const activeProviders = providerCards.filter(provider => {
-    const category = categories.find(cat => cat.slug === activeCategory);
-    return category?.providers.some(p => p.slug === provider.id);
-  });
+  // Filter providers based on search query
+  const filteredProviders = providerCards.filter(provider => 
+    provider.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    provider.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  
+  // Get providers for the active category and sort alphabetically
+  const activeProviders = (activeCategory === 'all' 
+    ? filteredProviders
+    : filteredProviders.filter(provider => {
+        const category = categories.find(cat => cat.name === activeCategory);
+        return category?.providers.some(p => p.slug === provider.id);
+      })).sort((a, b) => a.name.localeCompare(b.name));
 
   const handleValidation = async (providerId: string): Promise<void> => {
     const provider = providerCards.find(p => p.id === providerId);
@@ -106,8 +120,13 @@ export default function Validator({ categories, result }: ValidatorProps) {
     if (missingFields.length > 0) {
       setValidationResult({
         success: false,
+        status: ValidationStatus.UNAVAILABLE,
         message: `Please fill in all required fields: ${missingFields.join(', ')}`,
-        metadata: undefined
+        provider: provider.name,
+        code: 'MISSING FIELDS',
+        metadata: { missing_fields: missingFields },
+        status_class: 'error',
+        status_label: 'Invalid'
       });
       return;
     }
@@ -143,8 +162,13 @@ export default function Validator({ categories, result }: ValidatorProps) {
       if (response.ok) {
         setValidationResult({
           success: data.success,
+          status: data.status as ValidationStatus || (data.success ? ValidationStatus.VALID : ValidationStatus.INVALID),
           message: data.message,
-          metadata: data.metadata
+          provider: data.provider || provider.name,
+          code: data.code,
+          metadata: data.metadata,
+          status_class: data.status_class || (data.success ? 'success' : 'error'),
+          status_label: data.status_label || (data.success ? 'Valid' : 'Invalid')
         });
 
         // Update the API key status
@@ -161,8 +185,13 @@ export default function Validator({ categories, result }: ValidatorProps) {
       console.error('Validation error:', error);
       setValidationResult({
         success: false,
+        status: ValidationStatus.INVALID,
         message: error instanceof Error ? error.message : 'An error occurred during validation',
-        metadata: undefined
+        provider: provider.name,
+        code: 'VALIDATION_ERROR',
+        metadata: { error: error instanceof Error ? error.message : 'Unknown error' },
+        status_class: 'error',
+        status_label: 'Invalid'
       });
 
       setApiKeys(prev => prev.map(key => 
@@ -185,33 +214,81 @@ export default function Validator({ categories, result }: ValidatorProps) {
     <>
       <Head title="API Key Validator" />
       
-      <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white">
-        <ValidatorHeader stats={stats} />
+      <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white flex flex-col">
+        <ValidatorHeader stats={stats} className="sticky top-0 z-50 bg-white dark:bg-black" />
 
-        <div className="max-w-5xl mx-auto px-4 py-6">
+        <div className="flex-1 max-w-5xl mx-auto px-4 py-6 w-full">
           <ValidatorHero />
+
+          {/* Search Bar */}
+          <div className="mb-6">
+            <div className="relative max-w-md mx-auto">
+              <Input
+                type="text"
+                placeholder="Search services..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+            </div>
+            {searchQuery && (
+              <div className="text-center mt-2 text-sm text-gray-600 dark:text-gray-400">
+                {activeProviders.length} service{activeProviders.length !== 1 ? 's' : ''} found
+              </div>
+            )}
+          </div>
 
           <CategoryTabs
             categories={categoryNames}
-            activeCategory={categories.find(cat => cat.slug === activeCategory)?.name || categoryNames[0]}
+            activeCategory={activeCategory === 'all' ? 'All' : activeCategory}
             onCategoryChange={(categoryName) => {
-              const category = categories.find(cat => cat.name === categoryName);
-              if (category) setActiveCategory(category.slug);
+              if (categoryName === 'All') {
+                setActiveCategory('all');
+              } else {
+                setActiveCategory(categoryName);
+              }
             }}
             className="mb-6"
           >
-            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3 auto-rows-fr">
-              {activeProviders.map((provider) => {
-                const existingKey = apiKeys.find(k => k.provider === provider.id);
-                return (
-                  <ProviderCard
-                    key={provider.id}
-                    provider={provider}
-                    existingKey={existingKey}
-                    onValidate={handleValidation}
-                  />
-                );
-              })}
+            <div className="columns-1 md:columns-2 lg:columns-3 gap-4">
+              {activeProviders.length > 0 ? (
+                activeProviders.map((provider) => {
+                  const existingKey = apiKeys.find(k => k.provider === provider.id);
+                  return (
+                    <ProviderCard
+                      key={provider.id}
+                      provider={provider}
+                      existingKey={existingKey}
+                      onValidate={handleValidation}
+                      className="break-inside-avoid mb-4"
+                    />
+                  );
+                })
+              ) : (
+                <div className="col-span-full text-center py-12">
+                  <div className="text-gray-500 dark:text-gray-400">
+                    {searchQuery ? (
+                      <>
+                        <svg className="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <p className="text-lg font-medium">No services found</p>
+                        <p className="text-sm">Try adjusting your search terms</p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-lg font-medium">No services available</p>
+                        <p className="text-sm">Check back later for more services</p>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </CategoryTabs>
 
@@ -243,7 +320,12 @@ export default function Validator({ categories, result }: ValidatorProps) {
               <ValidationResult result={validationResult} />
             </div>
           )}
+
+          {/* Credits Section */}
+          <ThankYouSection />
         </div>
+
+        <ValidatorFooter currentYear={currentYear} className="sticky bottom-0 z-50 bg-white dark:bg-black" />
       </div>
     </>
   );

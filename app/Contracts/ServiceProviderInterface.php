@@ -2,6 +2,8 @@
 
 namespace App\Contracts;
 
+use App\Data\ValidationResult;
+
 /**
  * Service Provider Interface
  * 
@@ -31,6 +33,11 @@ interface ServiceProviderInterface
     public function getDescription(): string;
 
     /**
+     * Get the logo URL for the service provider
+     */
+    public function getLogo(): string;
+
+    /**
      * Get the required fields for validation (e.g., 'api_key', 'secret_key')
      */
     public function getRequiredFields(): array;
@@ -38,7 +45,7 @@ interface ServiceProviderInterface
     /**
      * Validate the provided API key/credentials
      */
-    public function validate(array $credentials): array;
+    public function validate(array $credentials): ValidationResult;
 
     /**
      * Get the main website URL for the service
