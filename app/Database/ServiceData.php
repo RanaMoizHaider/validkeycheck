@@ -107,6 +107,20 @@ class ServiceData
                 ]),
                 'class_name' => 'App\\Services\\AI\\Groq',
             ],
+            [
+                'name' => 'Mistral AI',
+                'slug' => 'mistral',
+                'category' => 'ai',
+                'description' => 'Advanced AI models for chat, code generation, and reasoning tasks',
+                'website_url' => 'https://mistral.ai',
+                'api_keys_url' => 'https://console.mistral.ai/api-keys',
+                'base_url' => 'https://api.mistral.ai/v1',
+                'documentation_url' => 'https://docs.mistral.ai/api/',
+                'required_fields' => json_encode([
+                    'api_key' => 'API Key'
+                ]),
+                'class_name' => 'App\\Services\\AI\\Mistral',
+            ],
         ];
     }
 } 
