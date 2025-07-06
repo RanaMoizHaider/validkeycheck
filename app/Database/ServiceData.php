@@ -35,6 +35,22 @@ class ServiceData
                 ]),
                 'class_name' => 'App\\Services\\AI\\Anthropic',
             ],
+            [
+                'name' => 'Amazon Bedrock',
+                'slug' => 'amazon-bedrock',
+                'category' => 'ai',
+                'description' => 'Amazon Bedrock provides access to foundation models from leading AI companies',
+                'website_url' => 'https://aws.amazon.com/bedrock/',
+                'api_keys_url' => 'https://console.aws.amazon.com/iam/home#/users',
+                'base_url' => 'https://bedrock.{region}.amazonaws.com',
+                'documentation_url' => 'https://docs.aws.amazon.com/bedrock/latest/userguide/getting-started-api.html',
+                'required_fields' => json_encode([
+                    'access_key_id' => 'AWS Access Key ID',
+                    'secret_access_key' => 'AWS Secret Access Key',
+                    'region' => 'AWS Region (e.g., us-east-1)'
+                ]),
+                'class_name' => 'App\\Services\\AI\\AmazonBedrock',
+            ],
         ];
     }
 } 
