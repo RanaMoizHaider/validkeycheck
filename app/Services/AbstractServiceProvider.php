@@ -45,8 +45,13 @@ abstract class AbstractServiceProvider implements ServiceProviderInterface
             $missingFields = $this->validateRequiredFields($credentials);
             if (!empty($missingFields)) {
                 return ValidationResult::failure(
-                    'Missing required fields: ' . implode(', ', $missingFields),
-                    'validation_error'
+                    provider: $this->getName(),
+                    message: 'Missing required fields: ' . implode(', ', $missingFields),
+                    status: \App\Enums\ValidationStatus::INVALID,
+                    code: null,
+                    metadata: [
+                        'missing_fields' => $missingFields,
+                    ]
                 );
             }
             
@@ -59,7 +64,17 @@ abstract class AbstractServiceProvider implements ServiceProviderInterface
                 'trace' => $e->getTraceAsString()
             ]);
             
-            return ValidationResult::fromException($e, $this->getName());
+            return ValidationResult::failure(
+                provider: $this->getName(),
+                message: 'An unexpected error occurred during validation',
+                status: \App\Enums\ValidationStatus::FAILED,
+                code: null,
+                metadata: [
+                    'error_type' => 'general_exception',
+                    'exception_class' => get_class($e),
+                    'raw_message' => $e->getMessage(),
+                ]
+            );
         }
     }
 
