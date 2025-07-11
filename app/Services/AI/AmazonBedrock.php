@@ -93,13 +93,10 @@ class AmazonBedrock extends AbstractServiceProvider
             };
 
             $status = match ($statusCode) {
-                400 => ValidationStatus::INVALID,
+                400, 404 => ValidationStatus::INVALID,
                 403 => ValidationStatus::FORBIDDEN,
-                404 => ValidationStatus::INVALID,
-                408 => ValidationStatus::UNAVAILABLE,
-                424 => ValidationStatus::FAILED,
+                408, 500, 503 => ValidationStatus::UNAVAILABLE,
                 429 => ValidationStatus::RATE_LIMITED,
-                500, 503 => ValidationStatus::UNAVAILABLE,
                 default => ValidationStatus::FAILED,
             };
 
@@ -120,4 +117,4 @@ class AmazonBedrock extends AbstractServiceProvider
             'region' => 'AWS Region (e.g., us-east-1)',
         ];
     }
-} 
+}

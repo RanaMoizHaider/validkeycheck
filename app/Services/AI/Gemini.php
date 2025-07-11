@@ -86,8 +86,7 @@ class Gemini extends AbstractServiceProvider
             };
 
             $status = match ($statusCode) {
-                400, 404 => ValidationStatus::INVALID,
-                401, 403 => ValidationStatus::INVALID,
+                400, 404, 401, 403 => ValidationStatus::INVALID,
                 429 => ValidationStatus::RATE_LIMITED,
                 500, 502, 503 => ValidationStatus::UNAVAILABLE,
                 default => ValidationStatus::FAILED,
@@ -108,4 +107,4 @@ class Gemini extends AbstractServiceProvider
             'api_key' => 'API Key',
         ];
     }
-} 
+}

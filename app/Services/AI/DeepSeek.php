@@ -85,8 +85,7 @@ class DeepSeek extends AbstractServiceProvider
             };
 
             $status = match ($statusCode) {
-                400, 422 => ValidationStatus::INVALID,
-                401 => ValidationStatus::INVALID,
+                400, 422, 401 => ValidationStatus::INVALID,
                 402 => ValidationStatus::FORBIDDEN,
                 429 => ValidationStatus::RATE_LIMITED,
                 500, 503 => ValidationStatus::UNAVAILABLE,
@@ -108,4 +107,4 @@ class DeepSeek extends AbstractServiceProvider
             'api_key' => 'API Key',
         ];
     }
-} 
+}

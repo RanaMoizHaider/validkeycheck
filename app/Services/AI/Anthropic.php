@@ -86,7 +86,6 @@ class Anthropic extends AbstractServiceProvider
             };
 
             $status = match ($statusCode) {
-                413 => ValidationStatus::INVALID,
                 429 => ValidationStatus::RATE_LIMITED,
                 500, 529 => ValidationStatus::UNAVAILABLE,
                 default => ValidationStatus::INVALID,
@@ -107,4 +106,4 @@ class Anthropic extends AbstractServiceProvider
             'api_key' => 'API Key',
         ];
     }
-} 
+}

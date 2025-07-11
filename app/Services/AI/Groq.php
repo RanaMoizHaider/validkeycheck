@@ -92,9 +92,7 @@ class Groq extends AbstractServiceProvider
             };
 
             $status = match ($statusCode) {
-                400, 422 => ValidationStatus::INVALID,
-                401, 403 => ValidationStatus::INVALID,
-                404 => ValidationStatus::INVALID,
+                400, 422, 401, 403, 404 => ValidationStatus::INVALID,
                 429 => ValidationStatus::RATE_LIMITED,
                 500, 502, 503, 504 => ValidationStatus::UNAVAILABLE,
                 default => ValidationStatus::FAILED,
@@ -115,4 +113,4 @@ class Groq extends AbstractServiceProvider
             'api_key' => 'API Key',
         ];
     }
-} 
+}
