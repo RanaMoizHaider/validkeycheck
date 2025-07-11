@@ -19,30 +19,34 @@ class XAI extends AbstractServiceProvider
         $apiKey = $credentials['api_key'];
 
         try {
-            $schema = new ObjectSchema(
-                name: 'validation_response',
-                description: 'API key validation response',
-                properties: [
-                    new StringSchema('status', 'Validation status'),
-                    new StringSchema('provider', 'Provider name'),
-                    new BooleanSchema('is_valid', 'Whether the API key is valid'),
-                    new StringSchema('message', 'Validation message'),
-                ],
-                requiredFields: ['status', 'provider', 'is_valid', 'message']
-            );
-
-            $response = Prism::structured()
-                ->using(Provider::XAI, 'grok-beta')
+            $response = Prism::text()
+                ->using(Provider::XAI, 'grok-3-mini')
                 ->usingProviderConfig(['api_key' => $apiKey])
-                ->withSchema($schema)
-                ->withPrompt('Validate this API key by responding with: status="success", provider="xAI", is_valid=true, message="API key is valid and working"')
+                ->withSystemPrompt('You are a validation service. Respond with a valid JSON object containing the validation result. Do not include any other text in your response.')
+                ->withPrompt('Validate this API key by responding with a JSON object containing: status="success", provider="xAI", is_valid=true, message="API key is valid and working"')
                 ->withClientOptions([
                     'timeout' => 30,
                     'connect_timeout' => 10,
                 ])
-                ->asStructured();
+                ->asText();
 
-            $validationData = $response->structured;
+            // Parse the text response to extract validation data
+            $validationData = null;
+            try {
+                // Try to parse the response as JSON
+                $jsonResponse = json_decode($response->text, true);
+
+                // Check if we have a valid JSON response with the required fields
+                if (is_array($jsonResponse) &&
+                    isset($jsonResponse['status']) &&
+                    isset($jsonResponse['provider']) &&
+                    isset($jsonResponse['is_valid']) &&
+                    isset($jsonResponse['message'])) {
+                    $validationData = $jsonResponse;
+                }
+            } catch (\Throwable $e) {
+                // If JSON parsing fails, we'll handle it as a failed validation
+            }
 
             if ($validationData && $validationData['is_valid']) {
                 return ValidationResult::success(
@@ -88,9 +92,7 @@ class XAI extends AbstractServiceProvider
             };
 
             $status = match ($statusCode) {
-                400, 422 => ValidationStatus::INVALID,
-                401, 403 => ValidationStatus::INVALID,
-                404 => ValidationStatus::INVALID,
+                400, 422, 401, 403, 404 => ValidationStatus::INVALID,
                 429 => ValidationStatus::RATE_LIMITED,
                 500, 502, 503, 504 => ValidationStatus::UNAVAILABLE,
                 default => ValidationStatus::FAILED,
@@ -111,4 +113,4 @@ class XAI extends AbstractServiceProvider
             'api_key' => 'API Key',
         ];
     }
-} 
+}
