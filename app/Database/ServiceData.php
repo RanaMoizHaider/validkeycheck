@@ -150,6 +150,20 @@ class ServiceData
                 'class_name' => 'App\\Services\\AI\\Perplexity',
             ],
             [
+                'name' => 'Exa',
+                'slug' => 'exa',
+                'category' => 'ai',
+                'description' => 'Exa provides AI-powered search and answer generation with citations',
+                'website_url' => 'https://exa.ai',
+                'api_keys_url' => 'https://dashboard.exa.ai/api-keys',
+                'base_url' => 'https://api.exa.ai',
+                'documentation_url' => 'https://docs.exa.ai',
+                'required_fields' => json_encode([
+                    'api_key' => 'API Key'
+                ]),
+                'class_name' => 'App\\Services\\AI\\Exa',
+            ],
+            [
                 'name' => 'Polar',
                 'slug' => 'polar',
                 'category' => 'payment',
