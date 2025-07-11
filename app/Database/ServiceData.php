@@ -135,6 +135,20 @@ class ServiceData
                 ]),
                 'class_name' => 'App\\Services\\AI\\XAI',
             ],
+            [
+                'name' => 'Perplexity',
+                'slug' => 'perplexity',
+                'category' => 'ai',
+                'description' => 'Perplexity AI for real-time web search and Q&A capabilities',
+                'website_url' => 'https://www.perplexity.ai',
+                'api_keys_url' => 'https://www.perplexity.ai/settings/api',
+                'base_url' => 'https://api.perplexity.ai/v1',
+                'documentation_url' => 'https://docs.perplexity.ai/',
+                'required_fields' => json_encode([
+                    'api_key' => 'API Key'
+                ]),
+                'class_name' => 'App\\Services\\AI\\Perplexity',
+            ],
         ];
     }
 } 
