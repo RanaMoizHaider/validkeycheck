@@ -40,7 +40,7 @@ class Exa extends AbstractServiceProvider
 
                 return ValidationResult::success(
                     provider: 'Exa',
-                    message: "Exa API key is valid and working.",
+                    message: 'Exa API key is valid and working.',
                     code: '200',
                     metadata: [
                         'answer' => $data['answer'] ?? null,
@@ -88,7 +88,6 @@ class Exa extends AbstractServiceProvider
             );
         }
     }
-
 
     public function getRequiredFields(): array
     {

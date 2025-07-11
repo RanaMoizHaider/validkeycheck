@@ -47,7 +47,7 @@ class Gemini extends AbstractServiceProvider
             if ($validationData && $validationData['is_valid']) {
                 return ValidationResult::success(
                     provider: 'Gemini',
-                    message: "Gemini API key is valid and working.",
+                    message: 'Gemini API key is valid and working.',
                     code: '200',
                     metadata: [
                         'model' => 'gemini-1.5-flash',

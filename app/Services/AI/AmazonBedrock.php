@@ -53,7 +53,7 @@ class AmazonBedrock extends AbstractServiceProvider
             if ($validationData && $validationData['is_valid']) {
                 return ValidationResult::success(
                     provider: 'Amazon Bedrock',
-                    message: "Amazon Bedrock credentials are valid and working.",
+                    message: 'Amazon Bedrock credentials are valid and working.',
                     code: '200',
                     metadata: [
                         'model' => 'anthropic.claude-3-haiku-20240307-v1:0',

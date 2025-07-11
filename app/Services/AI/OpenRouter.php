@@ -17,7 +17,7 @@ class OpenRouter extends AbstractServiceProvider
             $url = 'https://openrouter.ai/api/v1/credits';
             $options = [
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $apiKey,
+                    'Authorization' => 'Bearer '.$apiKey,
                     'Content-Type' => 'application/json',
                 ],
                 'timeout' => 30,
@@ -31,7 +31,7 @@ class OpenRouter extends AbstractServiceProvider
 
                 return ValidationResult::success(
                     provider: 'OpenRouter',
-                    message: "OpenRouter API key is valid and working.",
+                    message: 'OpenRouter API key is valid and working.',
                     code: '200',
                     metadata: [
                         'credits' => $creditsData,
@@ -50,7 +50,7 @@ class OpenRouter extends AbstractServiceProvider
             // For network errors or other exceptions
             return ValidationResult::failure(
                 provider: 'OpenRouter',
-                message: 'Connection error: ' . $e->getMessage(),
+                message: 'Connection error: '.$e->getMessage(),
                 status: ValidationStatus::FAILED,
                 code: null,
                 metadata: [
@@ -75,7 +75,7 @@ class OpenRouter extends AbstractServiceProvider
             429 => 'Rate limited - You are being rate limited',
             502 => 'Bad Gateway - Your chosen model is down or we received an invalid response from it',
             503 => 'Service Unavailable - No available model provider meets your routing requirements',
-            default => 'An unexpected error occurred: ' . $errorMessage,
+            default => 'An unexpected error occurred: '.$errorMessage,
         };
 
         $status = match ($statusCode) {

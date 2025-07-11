@@ -1,37 +1,46 @@
 export enum ValidationStatus {
-  VALID = 'valid',
-  INVALID = 'invalid',
-  FORBIDDEN = 'forbidden',
-  RATE_LIMITED = 'rate_limited',
-  UNAVAILABLE = 'unavailable'
+    VALID = 'valid',
+    INVALID = 'invalid',
+    FORBIDDEN = 'forbidden',
+    RATE_LIMITED = 'rate_limited',
+    UNAVAILABLE = 'unavailable',
 }
 
 export interface Provider {
-  slug: string;
-  name: string;
-  category: string;
-  description: string;
-  required_fields: string[] | { [key: string]: string };
-  documentation_url?: string;
-  base_url?: string;
-  website_url?: string;
-  api_keys_url?: string;
+    slug: string;
+    name: string;
+    category: string;
+    description: string;
+    required_fields: string[] | { [key: string]: string };
+    documentation_url?: string;
+    base_url?: string;
+    website_url?: string;
+    api_keys_url?: string;
 }
 
 export interface Category {
-  slug: string;
-  name: string;
-  description: string;
-  providers: Provider[];
+    slug: string;
+    name: string;
+    description: string;
+    providers: Provider[];
 }
 
+export type MetadataValue =
+    | null
+    | undefined
+    | boolean
+    | number
+    | string
+    | MetadataValue[]
+    | { [key: string]: MetadataValue };
+
 export interface ValidationResult {
-  success: boolean;
-  status: ValidationStatus;
-  message: string;
-  provider: string;
-  code?: string;
-  metadata?: { [key: string]: any };
-  status_class: string;
-  status_label: string;
-} 
+    success: boolean;
+    status: ValidationStatus;
+    message: string;
+    provider: string;
+    code?: string;
+    metadata?: { [key: string]: MetadataValue };
+    status_class: string;
+    status_label: string;
+}

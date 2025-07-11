@@ -15,7 +15,7 @@ class Service extends Model
     ];
 
     protected $hidden = [
-        'class_name'
+        'class_name',
     ];
 
     public function getRows()
@@ -46,6 +46,7 @@ class Service extends Model
     public function createInstance()
     {
         $className = $this->class_name;
+
         return new $className($this);
     }
-} 
+}

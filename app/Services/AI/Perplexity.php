@@ -18,7 +18,7 @@ class Perplexity extends AbstractServiceProvider
                 [
                     'method' => 'POST',
                     'headers' => [
-                        'Authorization' => 'Bearer ' . $apiKey,
+                        'Authorization' => 'Bearer '.$apiKey,
                         'Content-Type' => 'application/json',
                         'Accept' => 'application/json',
                     ],
@@ -27,8 +27,8 @@ class Perplexity extends AbstractServiceProvider
                         'messages' => [
                             [
                                 'role' => 'user',
-                                'content' => 'Respond with only the word "Working" if you can see this message.'
-                            ]
+                                'content' => 'Respond with only the word "Working" if you can see this message.',
+                            ],
                         ],
                         'max_tokens' => 10,
                         'temperature' => 0.1,
@@ -43,7 +43,7 @@ class Perplexity extends AbstractServiceProvider
             if ($statusCode === 200) {
                 return ValidationResult::success(
                     provider: 'Perplexity',
-                    message: "Perplexity API key is valid and working.",
+                    message: 'Perplexity API key is valid and working.',
                     code: '200',
                     metadata: [
                         'model' => 'sonar',

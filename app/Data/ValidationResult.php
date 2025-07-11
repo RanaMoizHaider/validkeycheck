@@ -13,8 +13,8 @@ class ValidationResult extends Data
         public readonly string $provider,
         public readonly string $message,
         public readonly ValidationStatus $status,
-        public readonly string|Optional $code = new Optional(),
-        public readonly array|Optional $metadata = new Optional(),
+        public readonly string|Optional $code = new Optional,
+        public readonly array|Optional $metadata = new Optional,
     ) {}
 
     /**
@@ -31,8 +31,8 @@ class ValidationResult extends Data
             provider: $provider,
             message: $message,
             status: ValidationStatus::VALID,
-            code: $code ?? new Optional(),
-            metadata: $metadata ?? new Optional()
+            code: $code ?? new Optional,
+            metadata: $metadata ?? new Optional
         );
     }
 
@@ -51,8 +51,8 @@ class ValidationResult extends Data
             provider: $provider,
             message: $message,
             status: $status ?? ValidationStatus::INVALID,
-            code: $code ?? new Optional(),
-            metadata: $metadata ?? new Optional()
+            code: $code ?? new Optional,
+            metadata: $metadata ?? new Optional
         );
     }
 
@@ -81,6 +81,7 @@ class ValidationResult extends Data
         $data['status'] = $this->status->value;
         $data['status_class'] = $this->getStatusClass();
         $data['status_label'] = $this->getStatusLabel();
+
         return $data;
     }
 }

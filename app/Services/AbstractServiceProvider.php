@@ -43,10 +43,10 @@ abstract class AbstractServiceProvider implements ServiceProviderInterface
     {
         try {
             $missingFields = $this->validateRequiredFields($credentials);
-            if (!empty($missingFields)) {
+            if (! empty($missingFields)) {
                 return ValidationResult::failure(
                     provider: $this->getName(),
-                    message: 'Missing required fields: ' . implode(', ', $missingFields),
+                    message: 'Missing required fields: '.implode(', ', $missingFields),
                     status: \App\Enums\ValidationStatus::INVALID,
                     code: null,
                     metadata: [
@@ -54,16 +54,16 @@ abstract class AbstractServiceProvider implements ServiceProviderInterface
                     ]
                 );
             }
-            
+
             return $this->performValidation($credentials);
-            
+
         } catch (Exception $e) {
             Log::error('Service provider validation error', [
                 'provider' => $this->getSlug(),
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
-            
+
             return ValidationResult::failure(
                 provider: $this->getName(),
                 message: 'An unexpected error occurred during validation',
@@ -104,10 +104,11 @@ abstract class AbstractServiceProvider implements ServiceProviderInterface
         $requiredFields = $this->getRequiredFieldsArray();
 
         foreach ($requiredFields as $field) {
-            if (!isset($credentials[$field]) || $credentials[$field] === '') {
+            if (! isset($credentials[$field]) || $credentials[$field] === '') {
                 $missing[] = $field;
             }
         }
+
         return $missing;
     }
 
@@ -117,7 +118,7 @@ abstract class AbstractServiceProvider implements ServiceProviderInterface
     protected function getRequiredFieldsArray(): array
     {
         $requiredFields = $this->getRequiredFields();
-        
+
         if (is_array($requiredFields)) {
             if (array_keys($requiredFields) !== range(0, count($requiredFields) - 1)) {
                 return array_keys($requiredFields);
@@ -125,19 +126,19 @@ abstract class AbstractServiceProvider implements ServiceProviderInterface
                 return $requiredFields;
             }
         }
-        
+
         if ($this->serviceData && isset($this->serviceData->required_fields)) {
-            $fields = is_string($this->serviceData->required_fields) 
-                ? json_decode($this->serviceData->required_fields, true) 
+            $fields = is_string($this->serviceData->required_fields)
+                ? json_decode($this->serviceData->required_fields, true)
                 : $this->serviceData->required_fields;
-            
+
             if (is_array($fields)) {
-                return is_array($fields) && array_keys($fields) !== range(0, count($fields) - 1) 
-                    ? array_keys($fields) 
+                return is_array($fields) && array_keys($fields) !== range(0, count($fields) - 1)
+                    ? array_keys($fields)
                     : $fields;
             }
         }
-        
+
         return [];
     }
 
@@ -178,4 +179,4 @@ abstract class AbstractServiceProvider implements ServiceProviderInterface
      * This method should be implemented by each service provider
      */
     abstract public function getRequiredFields(): array;
-} 
+}

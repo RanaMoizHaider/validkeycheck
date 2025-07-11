@@ -17,7 +17,7 @@ class Polar extends AbstractServiceProvider
             $url = 'https://api.polar.sh/v1/organizations/';
             $options = [
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $apiKey,
+                    'Authorization' => 'Bearer '.$apiKey,
                     'Content-Type' => 'application/json',
                 ],
                 'timeout' => 30,
@@ -41,7 +41,7 @@ class Polar extends AbstractServiceProvider
 
                 return ValidationResult::success(
                     provider: 'Polar',
-                    message: "Polar API key is valid and working.",
+                    message: 'Polar API key is valid and working.',
                     code: '200',
                     metadata: [
                         'organizations' => $organizationsData,
@@ -52,7 +52,7 @@ class Polar extends AbstractServiceProvider
                 // If we get here, we have an error response but not an exception
                 $errorData = $response['data']['detail'] ?? null;
                 $statusCode = $response['status_code'];
-                $errorMessage = is_array($errorData) && !empty($errorData) ? $errorData[0]['msg'] ?? 'Unknown error' : 'Unknown error';
+                $errorMessage = is_array($errorData) && ! empty($errorData) ? $errorData[0]['msg'] ?? 'Unknown error' : 'Unknown error';
 
                 return $this->handleErrorResponse($statusCode, $errorMessage);
             }
@@ -61,7 +61,7 @@ class Polar extends AbstractServiceProvider
             // For network errors or other exceptions
             return ValidationResult::failure(
                 provider: 'Polar',
-                message: 'Connection error: ' . $e->getMessage(),
+                message: 'Connection error: '.$e->getMessage(),
                 status: ValidationStatus::FAILED,
                 code: null,
                 metadata: [
@@ -82,10 +82,10 @@ class Polar extends AbstractServiceProvider
             401 => 'Invalid credentials - Invalid API key',
             403 => 'Forbidden - You do not have permission to access this resource',
             404 => 'Not Found - The requested resource was not found',
-            422 => 'Validation Error - ' . $errorMessage,
+            422 => 'Validation Error - '.$errorMessage,
             429 => 'Rate limited - You are being rate limited',
             500 => 'Server Error - An error occurred on the server',
-            default => 'An unexpected error occurred: ' . $errorMessage,
+            default => 'An unexpected error occurred: '.$errorMessage,
         };
 
         $status = match ($statusCode) {

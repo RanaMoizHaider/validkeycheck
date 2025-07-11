@@ -1,7 +1,7 @@
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Appearance, useAppearance } from '@/hooks/use-appearance';
 import { cn } from '@/lib/utils';
 import { LucideIcon, Monitor, Moon, Sun } from 'lucide-react';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function AppearanceToggleTab({ className = '' }: { className?: string }) {
     const { appearance, updateAppearance } = useAppearance();
@@ -18,7 +18,7 @@ export default function AppearanceToggleTab({ className = '' }: { className?: st
                 {tabs.map(({ value, icon: Icon, label }) => (
                     <TabsTrigger key={value} value={value} className="px-2 sm:px-3">
                         <Icon className="h-4 w-4" />
-                        <span className="hidden sm:inline ml-2">{label}</span>
+                        <span className="ml-2 hidden sm:inline">{label}</span>
                     </TabsTrigger>
                 ))}
             </TabsList>

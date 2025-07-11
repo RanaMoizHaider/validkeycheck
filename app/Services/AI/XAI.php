@@ -8,9 +8,6 @@ use App\Services\AbstractServiceProvider;
 use Prism\Prism\Enums\Provider;
 use Prism\Prism\Exceptions\PrismException;
 use Prism\Prism\Prism;
-use Prism\Prism\Schema\BooleanSchema;
-use Prism\Prism\Schema\ObjectSchema;
-use Prism\Prism\Schema\StringSchema;
 
 class XAI extends AbstractServiceProvider
 {
@@ -51,7 +48,7 @@ class XAI extends AbstractServiceProvider
             if ($validationData && $validationData['is_valid']) {
                 return ValidationResult::success(
                     provider: 'xAI',
-                    message: "xAI API key is valid and working.",
+                    message: 'xAI API key is valid and working.',
                     code: '200',
                     metadata: [
                         'model' => 'grok-beta',

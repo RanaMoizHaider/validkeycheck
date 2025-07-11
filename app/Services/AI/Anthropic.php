@@ -47,7 +47,7 @@ class Anthropic extends AbstractServiceProvider
             if ($validationData && $validationData['is_valid']) {
                 return ValidationResult::success(
                     provider: 'Anthropic',
-                    message: "Anthropic API key is valid and working.",
+                    message: 'Anthropic API key is valid and working.',
                     code: '200',
                     metadata: [
                         'model' => 'claude-3-haiku-20240307',

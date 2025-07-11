@@ -2,15 +2,15 @@
 
 namespace App\Services\AI;
 
-use App\Services\AbstractServiceProvider;
 use App\Data\ValidationResult;
 use App\Enums\ValidationStatus;
-use Prism\Prism\Prism;
+use App\Services\AbstractServiceProvider;
 use Prism\Prism\Enums\Provider;
+use Prism\Prism\Exceptions\PrismException;
+use Prism\Prism\Prism;
+use Prism\Prism\Schema\BooleanSchema;
 use Prism\Prism\Schema\ObjectSchema;
 use Prism\Prism\Schema\StringSchema;
-use Prism\Prism\Schema\BooleanSchema;
-use Prism\Prism\Exceptions\PrismException;
 
 class OpenAI extends AbstractServiceProvider
 {
@@ -49,7 +49,7 @@ class OpenAI extends AbstractServiceProvider
             if ($validationData && $validationData['is_valid']) {
                 return ValidationResult::success(
                     provider: 'OpenAI',
-                    message: "OpenAI API key is valid and working.",
+                    message: 'OpenAI API key is valid and working.',
                     code: '200',
                     metadata: [
                         'model' => 'gpt-4o-mini',

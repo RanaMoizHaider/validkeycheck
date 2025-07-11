@@ -6,7 +6,7 @@ use App\Data\ValidationResult;
 
 /**
  * Service Provider Interface
- * 
+ *
  * Note: Implementations should accept an optional service data object in their constructor
  * for accessing URL configurations from the Service model.
  */
@@ -61,4 +61,4 @@ interface ServiceProviderInterface
      * Get the official documentation URL for obtaining API keys
      */
     public function getDocumentationUrl(): ?string;
-} 
+}

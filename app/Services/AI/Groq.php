@@ -2,15 +2,15 @@
 
 namespace App\Services\AI;
 
-use App\Services\AbstractServiceProvider;
 use App\Data\ValidationResult;
 use App\Enums\ValidationStatus;
-use Prism\Prism\Prism;
+use App\Services\AbstractServiceProvider;
 use Prism\Prism\Enums\Provider;
+use Prism\Prism\Exceptions\PrismException;
+use Prism\Prism\Prism;
+use Prism\Prism\Schema\BooleanSchema;
 use Prism\Prism\Schema\ObjectSchema;
 use Prism\Prism\Schema\StringSchema;
-use Prism\Prism\Schema\BooleanSchema;
-use Prism\Prism\Exceptions\PrismException;
 
 class Groq extends AbstractServiceProvider
 {
@@ -51,7 +51,7 @@ class Groq extends AbstractServiceProvider
             if ($validationData && $validationData['is_valid']) {
                 return ValidationResult::success(
                     provider: 'Groq',
-                    message: "Groq API key is valid and working.",
+                    message: 'Groq API key is valid and working.',
                     code: '200',
                     metadata: [
                         'model' => 'llama-3.3-70b-versatile',

@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Data\ValidationResult;
+use App\Enums\ValidationStatus;
 use App\Http\Requests\ValidateProviderRequest;
 use App\Models\Category;
 use App\Models\Service;
-use App\Data\ValidationResult;
-use App\Enums\ValidationStatus;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ValidatorController extends Controller
@@ -16,24 +15,24 @@ class ValidatorController extends Controller
     {
         $categories = Category::with('services')
             ->get()
-            ->filter(fn($category) => $category->services->isNotEmpty())
-            ->map(fn($category) => [
+            ->filter(fn ($category) => $category->services->isNotEmpty())
+            ->map(fn ($category) => [
                 ...$category->only(['slug', 'name', 'description']),
-                'providers' => $category->services
+                'providers' => $category->services,
             ])
             ->values();
 
         return Inertia::render('validator', [
             'categories' => $categories,
-            'currentYear' => date('Y')
+            'currentYear' => date('Y'),
         ]);
     }
 
     public function validate(ValidateProviderRequest $request)
     {
         $service = Service::where('slug', $request->validated('provider'))->first();
-        
-        if (!$service) {
+
+        if (! $service) {
             return response()->json(
                 ValidationResult::failure(
                     'Service not found',
@@ -62,4 +61,4 @@ class ValidatorController extends Controller
             );
         }
     }
-} 
+}

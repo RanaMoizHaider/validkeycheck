@@ -19,12 +19,12 @@ class PayPal extends AbstractServiceProvider
                 [
                     'method' => 'POST',
                     'headers' => [
-                        'Authorization' => 'Basic ' . base64_encode($clientId . ':' . $clientSecret),
-                        'Content-Type' => 'application/x-www-form-urlencoded'
+                        'Authorization' => 'Basic '.base64_encode($clientId.':'.$clientSecret),
+                        'Content-Type' => 'application/x-www-form-urlencoded',
                     ],
                     'data' => [
-                        'grant_type' => 'client_credentials'
-                    ]
+                        'grant_type' => 'client_credentials',
+                    ],
                 ]
             );
 
@@ -48,7 +48,7 @@ class PayPal extends AbstractServiceProvider
                         'app_id' => $appId,
                         'nonce' => $nonce,
                         'environment' => 'production',
-                        'scope' => $data['scope'] ?? null
+                        'scope' => $data['scope'] ?? null,
                     ]
                 );
             }
@@ -85,17 +85,17 @@ class PayPal extends AbstractServiceProvider
                 metadata: [
                     'status_code' => $statusCode,
                     'error' => $data['error'] ?? null,
-                    'error_description' => $data['error_description'] ?? null
+                    'error_description' => $data['error_description'] ?? null,
                 ]
             );
         } catch (\Exception $e) {
             return ValidationResult::failure(
                 provider: $this->getName(),
-                message: 'Failed to connect to PayPal API: ' . $e->getMessage(),
+                message: 'Failed to connect to PayPal API: '.$e->getMessage(),
                 status: ValidationStatus::FAILED,
                 metadata: [
                     'exception' => get_class($e),
-                    'message' => $e->getMessage()
+                    'message' => $e->getMessage(),
                 ]
             );
         }
@@ -105,7 +105,7 @@ class PayPal extends AbstractServiceProvider
     {
         return [
             'client_id' => 'Client ID',
-            'client_secret' => 'Client Secret'
+            'client_secret' => 'Client Secret',
         ];
     }
 }

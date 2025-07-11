@@ -47,7 +47,7 @@ class Mistral extends AbstractServiceProvider
             if ($validationData && $validationData['is_valid']) {
                 return ValidationResult::success(
                     provider: 'Mistral',
-                    message: "Mistral API key is valid and working.",
+                    message: 'Mistral API key is valid and working.',
                     code: '200',
                     metadata: [
                         'model' => 'mistral-small-latest',

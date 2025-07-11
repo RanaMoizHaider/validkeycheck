@@ -31,4 +31,4 @@ class ValidateProviderRequest extends FormRequest
             'credentials.*.string' => 'All credential fields must be strings.',
         ];
     }
-} 
+}
