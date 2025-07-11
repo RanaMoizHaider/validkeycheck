@@ -177,6 +177,21 @@ class ServiceData
                 ]),
                 'class_name' => 'App\\Services\\Payment\\Polar',
             ],
+            [
+                'name' => 'PayPal',
+                'slug' => 'paypal',
+                'category' => 'payment',
+                'description' => 'Global online payment system and digital wallet',
+                'website_url' => 'https://paypal.com',
+                'api_keys_url' => 'https://developer.paypal.com/developer/applications/',
+                'base_url' => 'https://api.paypal.com',
+                'documentation_url' => 'https://developer.paypal.com/docs/api/overview/',
+                'required_fields' => json_encode([
+                    'client_id' => 'Client ID',
+                    'client_secret' => 'Client Secret'
+                ]),
+                'class_name' => 'App\\Services\\Payment\\PayPal',
+            ],
         ];
     }
 } 
