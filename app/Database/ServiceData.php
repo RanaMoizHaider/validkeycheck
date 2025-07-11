@@ -149,6 +149,20 @@ class ServiceData
                 ]),
                 'class_name' => 'App\\Services\\AI\\Perplexity',
             ],
+            [
+                'name' => 'Polar',
+                'slug' => 'polar',
+                'category' => 'payment',
+                'description' => 'Online payment processing platform for internet businesses',
+                'website_url' => 'https://polar.sh',
+                'api_keys_url' => 'https://polar.sh',
+                'base_url' => 'https://api.polar.sh/v1',
+                'documentation_url' => 'https://docs.polar.sh',
+                'required_fields' => json_encode([
+                    'api_key' => 'API Key'
+                ]),
+                'class_name' => 'App\\Services\\Payment\\Polar',
+            ],
         ];
     }
 } 
